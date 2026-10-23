@@ -1,0 +1,76 @@
+:root{--navy:#0A2540;--navy2:#123659;--fog:#EEF3F6;--card:#fff;--ink:#0E1B2A;--muted:#58697A;--line:#D5DEE6;--yellow:#FFC72C;--teal:#1B8A9A;--bad:#C0392B;--ok:#1E9E5A}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--fog);color:var(--ink);font:16px/1.55 Barlow,system-ui,sans-serif}
+h1,h2,h3,h4{font-family:"Barlow Condensed",sans-serif;margin:0}
+h2{font-size:32px;text-transform:uppercase;margin:44px 0 8px}
+h3{font-size:26px}
+h4{font-size:18px;text-transform:uppercase;letter-spacing:.04em;margin:16px 0 6px}
+.wrap{max-width:1280px;margin:0 auto;padding:0 16px 60px}
+.lede{max-width:80ch;color:var(--muted)}
+.mini{font-size:13.5px;color:var(--muted);margin:6px 0}
+.mini.aviso{color:#8a5a00}
+.pad{padding:24px}
+.nav{position:sticky;top:0;z-index:20;display:flex;gap:16px;align-items:center;overflow-x:auto;white-space:nowrap;background:var(--navy);color:#fff;padding:10px 16px;border-bottom:4px solid var(--yellow)}
+.nav b{font:700 20px "Barlow Condensed";text-transform:uppercase;margin-right:10px}
+.nav a{color:#CFE0EE;text-decoration:none;font-weight:500}
+.nav a:hover{color:var(--yellow)}
+.hero{position:relative;height:92vh;min-height:560px;background:var(--navy);color:#fff;overflow:hidden}
+.hero-3d{position:absolute;inset:0}
+.hero-txt{position:absolute;left:0;right:0;bottom:0;padding:24px 16px 28px;background:linear-gradient(transparent,rgba(10,37,64,.92) 40%);pointer-events:none}
+.hero-txt>*{max-width:1248px;margin-left:auto;margin-right:auto}
+.hero h1{font-size:clamp(34px,6vw,64px);line-height:1;text-transform:uppercase;max-width:20ch}
+.hero p{max-width:70ch;color:#C8D8E6;margin-top:10px}
+.kpis{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.kpis div{background:rgba(255,255,255,.08);border-top:3px solid var(--yellow);padding:8px 14px}
+.kpis b{display:block;font:700 28px/1.1 "Barlow Condensed"}
+.kpis span{font-size:13px;color:#B9CADB}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.caixa{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--yellow);padding:12px 16px}
+.caixa p{margin:6px 0 0}
+.stage{height:560px;background:var(--navy);border:1px solid var(--line);position:relative}
+.rotulo-3d{font:600 12px Barlow,sans-serif;white-space:nowrap;background:var(--navy);color:#fff;padding:2px 6px;border:1px solid var(--yellow)}
+.rotulo-3d.sel{background:var(--yellow);color:var(--navy)}
+.rotulo-acesso{background:#fff;color:var(--navy)}
+.bussola{font:700 16px "Barlow Condensed";color:var(--navy);background:#fff;padding:0 6px;border:1px solid var(--navy)}
+.bussola.norte{background:var(--yellow)}
+.tablewrap{overflow-x:auto;background:var(--card);border:1px solid var(--line)}
+table.t{border-collapse:collapse;width:100%;font-size:14px}
+.t th,.t td{padding:8px 11px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+.t th{background:var(--navy);color:#fff;font:600 13px "Barlow Condensed";letter-spacing:.08em;text-transform:uppercase}
+.t td.n{text-align:right;font-variant-numeric:tabular-nums}
+.t tr.click{cursor:pointer}.t tr.click:hover td{background:#FFF6D8}
+.tag{display:inline-block;font:600 12px "Barlow Condensed";letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;background:var(--navy);color:#fff;margin:2px 4px 0 0}
+.tag.tier-A{background:var(--yellow);color:var(--navy)}.tag.tier-B{background:var(--teal)}.tag.tier-C{background:#7C8EA3}
+.tag.risco{background:#fff;color:var(--bad);border:1px solid var(--bad)}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}
+.seg-rot{font-size:13px;color:var(--muted)}
+.seg button{font:600 14px Barlow;padding:6px 12px;border:2px solid var(--navy);background:#fff;color:var(--navy);cursor:pointer}
+.seg button.on{background:var(--yellow)}
+.seg button small{opacity:.7;font-weight:400}
+.dossie-grid{display:grid;grid-template-columns:340px 1fr;gap:14px;align-items:start}
+.lista{list-style:none;margin:0;padding:0;max-height:880px;overflow:auto;border:1px solid var(--line);background:#fff}
+.lista button{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;width:100%;padding:8px 10px;border:0;border-bottom:1px solid var(--line);background:#fff;text-align:left;cursor:pointer;font:inherit}
+.lista button.on{background:#FFF6D8;box-shadow:inset 4px 0 0 var(--yellow)}
+.lista small{display:block;color:var(--muted);font-size:12px}
+.painel{min-width:0}
+.studio{background:#fff;border:1px solid var(--line)}
+.studio-canvas{height:520px;position:relative;background:#BFD9EA}
+.studio-hud{position:absolute;left:10px;top:10px;background:var(--navy);color:#fff;font-size:13px;padding:3px 8px}
+.studio-ctl{padding:10px 14px}
+.hora{display:flex;gap:10px;align-items:center;font-size:14px}.hora input{flex:1;accent-color:#0A2540}
+.sol-tab{border-collapse:collapse;font-size:13.5px;margin:8px 0}
+.sol-tab th,.sol-tab td{padding:4px 12px;border:1px solid var(--line);text-align:center}
+.sol-tab th{background:var(--navy);color:#fff;font-weight:500}.sol-tab td.dest{background:#FFF0B3;font-weight:600}
+.dossie{background:#fff;border:1px solid var(--line);border-top:0;padding:14px 16px}
+.dossie-topo{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap}
+.preco{font:700 34px/1 "Barlow Condensed";color:var(--navy);text-align:right}.preco small{display:block;font:400 13px Barlow;color:var(--muted)}
+.ficha{display:grid;grid-template-columns:auto 1fr;gap:3px 14px;margin:10px 0;font-size:14px}
+.ficha dt{color:var(--muted)}.ficha dd{margin:0;text-align:right}
+.barra{display:grid;grid-template-columns:minmax(150px,260px) 1fr 32px;gap:10px;align-items:center;font-size:13.5px;margin:3px 0}
+.barra small{color:var(--muted)}
+.trilho{height:10px;background:var(--fog);border:1px solid var(--line)}.trilho i{display:block;height:100%;background:var(--navy)}
+.check{background:#fff;border:1px solid var(--line);padding:12px 16px 12px 34px;max-width:100ch}
+.check li{margin:4px 0}
+@media (max-width:900px){.dossie-grid{grid-template-columns:1fr}.lista{max-height:320px}.stage{height:440px}.studio-canvas{height:420px}.barra{grid-template-columns:1fr 1fr 28px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
