@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estudo VivaPark · obras e lançamentos em Porto Belo</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+  :root{--navy:#0A2540;--navy2:#123659;--fog:#EEF3F6;--card:#fff;--ink:#0E1B2A;--muted:#58697A;--line:#D5DEE6;--yellow:#FFC72C;--teal:#1B8A9A;--ok:#1E9E5A;--warn:#D98E04;--bad:#C0392B;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fog);color:var(--ink);font:16px/1.5 Barlow,system-ui,sans-serif}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 16px}
+  header.top{background:var(--navy);color:#fff;padding:22px 0 26px;border-bottom:6px solid var(--yellow)}
+  header.top h1{font:700 40px/1.05 "Barlow Condensed",sans-serif;margin:0 0 6px;letter-spacing:.01em;text-transform:uppercase}
+  header.top p{margin:0;color:#B9CADB;max-width:80ch}
+  h2{font:700 28px/1.1 "Barlow Condensed",sans-serif;text-transform:uppercase;margin:36px 0 10px}
+  h3{font:700 22px/1.1 "Barlow Condensed",sans-serif;margin:0}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:18px 0}
+  .kpi{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--yellow);padding:10px 14px}
+  .kpi b{display:block;font:700 30px/1.1 "Barlow Condensed",sans-serif;color:var(--navy)}
+  .kpi span{font-size:13px;color:var(--muted)}
+  #map{height:620px;border:1px solid var(--line);background:#cfd8e0}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin:8px 0}
+  .dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:5px;vertical-align:-1px;border:2px solid #fff;box-shadow:0 0 0 1px #0006}
+  .tablewrap{overflow-x:auto;background:var(--card);border:1px solid var(--line)}
+  table{border-collapse:collapse;width:100%;font-size:14px}
+  th,td{padding:8px 11px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+  th{background:var(--navy);color:#fff;font:600 13px "Barlow Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+  td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+  tr:nth-child(even) td{background:#F7FAFC}
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+  select,input[type=search]{font:15px Barlow,sans-serif;padding:7px 10px;border:1px solid var(--line);background:#fff}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px}
+  .card{background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column}
+  .card header{display:flex;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);align-items:flex-start}
+  .card header svg{flex:none;background:var(--fog)}
+  .tag{display:inline-block;font:600 12px "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;background:var(--navy);color:#fff;margin:2px 4px 0 0}
+  .tag.y{background:var(--yellow);color:var(--navy)}
+  .tag.r{background:#fff;color:var(--bad);border:1px solid var(--bad)}
+  .tag.g{background:#fff;color:var(--ok);border:1px solid var(--ok)}
+  .body{padding:10px 14px 14px;font-size:14px}
+  dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:0 0 8px}
+  dt{color:var(--muted)} dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
+  .price{font:700 28px/1 "Barlow Condensed",sans-serif;color:var(--navy)}
+  .lazer{font-size:13px;color:#33475b;margin:6px 0 0}
+  .tape{height:10px;background:repeating-linear-gradient(135deg,var(--yellow) 0 8px,var(--navy) 8px 16px);margin-top:6px;position:relative}
+  .tape i{position:absolute;inset:0 auto 0 0;background:var(--navy)}
+  .note{background:#fff;border:1px solid var(--line);border-left:4px solid var(--warn);padding:10px 14px;margin:10px 0;font-size:14px;max-width:100ch}
+  .src{font-size:12.5px;color:var(--muted)}
+  a{color:var(--teal)}
+  footer{margin:40px 0;padding-top:12px;border-top:1px solid var(--line)}
+  @media (max-width:640px){header.top h1{font-size:32px}#map{height:480px}.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <h1>Estudo VivaPark · obras e lançamentos</h1>
+  <p>Mapeamento dos empreendimentos do VivaPark (Jardim Dourado, Porto Belo/SC) e das obras de outras construtoras no entorno. Preços e R$/m² do DWV de 22/10/2026; ficha técnica, pavimentos e lazer dos portais. Onde o dado não foi publicado, aparece “—” e nada foi estimado.</p>
+</div></header>
+
+<div class="wrap">
+  <div class="kpis" id="kpis"></div>
+
+  <h2>Mapa</h2>
+  <div class="legend">
+    <span><i class="dot" style="background:#FFC72C"></i>VivaPark (Vokkan e parceiras)</span>
+    <span><i class="dot" style="background:#1B8A9A"></i>Entorno (outras construtoras)</span>
+    <span>Contorno vermelho = posição estimada (rua, sem número) · camadas: satélite / ruas</span>
+  </div>
+  <div id="map"></div>
+  <p class="src">Ponto de referência: acesso do VivaPark Porto Belo (-27,16108; -48,60431), do link do Google Maps enviado. Os pinos dos prédios são posicionados pela rua do endereço publicado e pelo desenho do seu mapa; confirme no local antes de usar em material oficial.</p>
+
+  <h2>Ranking de preço por m²</h2>
+  <div class="filters">
+    <select id="fGrupo"><option value="">Todos</option><option value="vivapark">Só VivaPark</option><option value="entorno">Só entorno</option></select>
+    <select id="fFase"><option value="">Todas as fases</option><option>Pré-lançamento</option><option>Em obra</option><option>Pronto</option><option>Futuro lançamento</option></select>
+    <input id="fBusca" type="search" placeholder="Buscar nome ou construtora">
+  </div>
+  <div class="tablewrap"><table id="tabela"></table></div>
+  <p class="src">R$/m² = menor preço de tabela dividido pela área da unidade mais barata (a unidade mais barata costuma ser a menor, então o R$/m² médio de outras plantas pode ser diferente). Fonte: DWV (conta do corretor), 22/10/2026. Preço de tabela, sujeito a alteração.</p>
+
+  <h2>Fichas detalhadas</h2>
+  <div class="cards" id="cards"></div>
+
+  <h2>Leitura do mercado</h2>
+  <div id="leitura"></div>
+
+  <h2>Divergências e lacunas</h2>
+  <div class="note"><b>Portais x DWV.</b> Os portais (MySide) ainda tratam Voz, Videiras, Veleiros, Verenna, Vision e Vitta 27 como “futuro lançamento, não está à venda”, mas o DWV lista unidades, preços e, em alguns, obra em andamento (Voz 44%, Vértice 60%, Videiras 15%, Veleiros 13%). Para preço e disponibilidade vale o DWV; para ficha técnica e lazer, os portais, que são material de divulgação e trazem metragens inconsistentes entre texto e FAQ.</div>
+  <div class="note"><b>Pavimentos:</b> só estão publicados para Voz (18), Videiras (30, sendo 24 residenciais), Verenna (33, em 2 torres) e Luz de Valéria (20). Nos demais, “—”. As ilustrações são desenhos esquemáticos; sem pavimento publicado o prédio é desenhado tracejado e sem escala.</div>
+  <div class="note"><b>Não localizados:</b> endereço e ficha do Valence Residence, do Veccel Corporate e da Casa Olivea; data de entrega e Registro de Incorporação não aparecem nos portais; unidades por andar só em Luz de Valéria (5) e Artis (6). Preços de empreendimentos fora do DWV não foram publicados, exceto Reserva do Arvoredo (R$ 1,96 mi), Vértice, Vista Jardins e Lagom (um apartamento).</div>
+
+  <footer class="src">
+    Fontes: DWV (app.dwvapp.com.br, conta do corretor, coleta 22/10/2026); MySide (páginas dos empreendimentos e guia do Vivapark); Google Maps (link enviado); OpenStreetMap/Nominatim (ruas). Coleta feita em 23/10/2026. Estudo preparado por Claude para Emanuel Milchevski.
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/* grupo: vivapark | entorno. obra/preço/R$ m² = DWV 22/10/2026. pav, torres, quartos, lazer = MySide. pos = 'estimada' (rua, sem número). */
+const D = [
+ {id:'vitta27',nome:'Vitta 27 (Torres 1 e 2)',c:'Vokkan / Famex',g:'vivapark',lat:-27.1626,lng:-48.6022,end:'Rua Hortência, 45, Jardim Dourado',fase:'Pré-lançamento',obra:0,ent:null,pav:null,torres:2,q:'1 a 3 quartos',areas:'64 a 199 m²',disp:157,ap:812643,area:37,pm2:21963,tipo:'Escritório (studio 32 m² a R$ 855.241)',ri:false,lazer:['Coworking','Lavanderia compartilhada','Brinquedoteca','Academia','Espaço gourmet','Sala de pilates','Salão de festas','Piscina externa e coberta','Spa, sauna e sala de massagem','Lounge','Mirante','Bicicletário'],lm2:null,nota:'Torre 1 prevista mar/2032 e Torre 2 mar/2031 nos portais. Sem Registro de Incorporação (pré-reserva).'},
+ {id:'verenna',nome:'Verenna',c:'Vokkan / Conrado',g:'vivapark',lat:-27.1551,lng:-48.5899,end:'Av. Colombo Machado Sales, 1480',fase:'Pré-lançamento',obra:0,ent:'2030-10',pav:33,torres:2,q:'2 a 4 quartos',areas:'64 a 133 m² (texto cita até 202)',disp:61,ap:1122207,area:64,pm2:17534,tipo:'1 suíte + 2 demi',ri:false,lazer:['Mais de 2.700 m² de lazer','Piscinas externa e térmica','Academia e spa','Pub','Salões de festas','Coworking','Áreas gourmet','Horta comunitária','Rooftop de lazer'],lm2:2700,nota:'197 apartamentos + 7 salas comerciais; área construída 36.312 m²; projeto OSPA Arquitetura. Sem Registro de Incorporação (pré-reserva).'},
+ {id:'valence',nome:'Valence Residence',c:'Vokkan',g:'vivapark',lat:-27.1618,lng:-48.6008,end:'VivaPark (endereço não publicado)',fase:'Pré-lançamento',obra:0,ent:null,pav:null,torres:null,q:'1 suíte + 1 dorm. a 2 suítes',areas:'73 a 77 m² (melhores entradas)',disp:130,ap:1137560,area:73,pm2:15583,tipo:'1 suíte + 1 dorm.',ri:null,lazer:[],lm2:null,nota:'Não achei ficha pública em portais; dados de preço vêm do DWV.'},
+ {id:'ventura',nome:'Edifício Ventura',c:'Vokkan / Torresani',g:'vivapark',lat:-27.1618,lng:-48.6041,end:'Av. Silvio Camargo, Jardim Dourado',fase:'Pré-lançamento',obra:0,ent:'2028-04',pav:null,torres:null,q:'2 a 3 quartos',areas:'a partir de 61 m² (3 dorm.: 98 m²)',disp:12,ap:1234703,area:61,pm2:20241,tipo:'1 suíte + 1 dorm. + sacada',ri:null,lazer:['Piscina externa e prainha','Ofurôs','Espaços gourmet','Playground e espaço kids','Sala de jogos','Academia e academia ao ar livre','Fireplaces e sauna','Rooftop panorâmico'],lm2:null,nota:'Portal: futuro lançamento, abr/2028.'},
+ {id:'vision',nome:'Vision Home Club (fases 1 a 3)',c:'Vokkan / N1',g:'vivapark',lat:-27.1596,lng:-48.5968,end:'Av. Pedro Elias Rodrigues',fase:'Pré-lançamento',obra:0,ent:'2030-12',pav:null,torres:null,q:'2 a 4 quartos',areas:'96 a 239 m²',disp:80,ap:1491720,area:96,pm2:15539,tipo:'T1 3 suítes + sacada',ri:null,lazer:['Mais de 5.800 m² de lazer','Piscinas com bar e lounge','Saunas','Quadra poliesportiva','Academia com pilates e yoga','Salão de festas'],lm2:5800,nota:'Fase 1 dez/2030 (133–178 m²), fase 2 dez/2031 (96–181 m²), fase 3 dez/2032 (137–239 m²).'},
+ {id:'veccel',nome:'Veccel Corporate',c:'Vokkan / Eccel',g:'vivapark',lat:-27.1612,lng:-48.6035,end:'VivaPark (endereço não publicado)',fase:'Pré-lançamento',obra:0,ent:'2030-06',pav:null,torres:null,q:'Salas comerciais',areas:'a partir de 27 m²',disp:42,ap:652705,area:27,pm2:24174,tipo:'Sala comercial',ri:null,lazer:[],lm2:null,nota:'Edifício corporativo; perfil de renda diferente dos residenciais.'},
+ {id:'veleiros',nome:'Veleiros Residence',c:'Vokkan / Torresani',g:'vivapark',lat:-27.1638,lng:-48.6030,end:'Av. Pedro Elias Rodrigues, 1',fase:'Em obra',obra:13,ent:'2030-04',pav:null,torres:3,q:'1 e 2 quartos (loft, duplex)',areas:'44 a 179 m²',disp:54,ap:1197971,area:51,pm2:23490,tipo:'T3 2 suítes duplex + sacada',ri:null,lazer:['3.600 m² de lazer em rooftops','Torre Porto: fireplace, 2 salões, sport bar','Torre Cais: academia, yoga, pilates, sauna','Torre Farol: piscina de 22 m, prainha, gourmet, observatório','Churrasqueira a carvão em todos os apartamentos'],lm2:3600,nota:'Portal diz futuro lançamento jun/2029; DWV mostra obra a 13% e entrega abr/2030.'},
+ {id:'videiras',nome:'Edifício Videiras',c:'Vokkan / Torresani',g:'vivapark',lat:-27.1614,lng:-48.5996,end:'Av. Pedro Elias Rodrigues',fase:'Em obra',obra:15,ent:'2028-09',pav:30,torres:1,q:'3 quartos',areas:'118 a 198 m²',disp:21,ap:2656199,area:121,pm2:21952,tipo:'3 suítes + sacada',ri:null,lazer:['Piscina aquecida','Espaço gourmet','Academia','Wine bar e charutaria','Brinquedoteca','Prainha','Lounge com vista e rooftop','Espaço zen com mirante','Redário, fireplace e braseiro'],lm2:null,nota:'30 pavimentos, 24 residenciais.'},
+ {id:'voz',nome:'Edifício Voz',c:'Vokkan / Torresani',g:'vivapark',lat:-27.1648,lng:-48.6018,end:'Av. Silvio Camargo / Av. Azaleia',fase:'Em obra',obra:44,ent:'2027-10',pav:18,torres:1,q:'Studio a 1 quarto',areas:'21 a 124 m²',disp:7,ap:717894,area:29,pm2:24755,tipo:'Studio',ri:null,lazer:['2.100 m² de lazer em 6 pavimentos','Solarium e piscina com quebra-gelo','Prainha','Bar e estar da piscina','Ofurôs','Spa com sauna e sala de massagem'],lm2:2100,nota:'Aparece no seu mapa do Google como “Voz – Vivapark”.'},
+ {id:'vertice',nome:'Edifício Vértice',c:'Vokkan / Torresani',g:'vivapark',lat:-27.1632,lng:-48.6022,end:'Av. Gov. Celso Ramos / R. Hortência',fase:'Em obra',obra:60,ent:'2027-06',pav:null,torres:null,q:'1 suíte (89 a 157 m²)',areas:'89 a 157 m²',disp:13,ap:1827918,area:88,pm2:20772,tipo:'1 suíte + piscina',ri:null,lazer:['Open shopping no térreo','Coworking e lavanderia','Pub, bar e café bar','Estúdio de gravação','Piscinas adulto, infantil, aquecida e coberta','Academia, spa, sauna, ofurô','Salão de festas e sala de jogos','Espaço gourmet e brinquedoteca','Yoga e redário'],lm2:null,nota:'Portal: a partir de R$ 2,07–2,13 mi (planta de 101 m²); DWV: R$ 1,83 mi a 88 m².'},
+ {id:'vista',nome:'Edifício Vista Jardins',c:'Vokkan / Torresani',g:'vivapark',lat:-27.1601,lng:-48.6060,end:'Av. Gov. Celso Ramos, Jardim Dourado',fase:'Em obra',obra:95,ent:'2026-06',pav:null,torres:null,q:'3 suítes, 3 vagas',areas:'172 a 400 m²',disp:10,ap:3211031,area:172,pm2:18669,tipo:'3 suítes',ri:null,lazer:['3.000 m² de lazer','Piscina aquecida, adulto e infantil','Academia, sauna e massagem','Quadra esportiva','Salão de festas, jogos, gourmet','Brinquedoteca e playground','Pub, bar, solarium, fireplace','Segurança 24 h'],lm2:3000,nota:'Portal: pronto para morar (entrega jun/2026). DWV: obra a 95%.'},
+ {id:'inc31',nome:'Vivapark INC 31',c:'Vokkan',g:'vivapark',lat:-27.1634,lng:-48.6011,end:'Rua Magnólia',fase:'Futuro lançamento',obra:0,ent:'2032-04',pav:null,torres:null,q:'1 quarto (loft duplex)',areas:'46 a 48 m²',disp:null,ap:null,area:null,pm2:null,tipo:null,ri:null,lazer:[],lm2:null,nota:'Sem preço divulgado.'},
+ {id:'olivea',nome:'Casa Olivea',c:'Urbaniza',g:'vivapark',lat:-27.1645,lng:-48.6062,end:'VivaPark (loteamento de casas)',fase:'Em obra',obra:45,ent:'2027-04',pav:null,torres:null,q:'Casa 4 suítes',areas:'351 m²',disp:1,ap:6800000,area:351,pm2:19373,tipo:'Casa 4 suítes',ri:null,lazer:[],lm2:null,nota:'Casa em loteamento do VivaPark (terrenos de 360 a 716 m² segundo o guia).'},
+ {id:'artis',nome:'Artis Home Club',c:'Pasqualotto',g:'entorno',lat:-27.15645,lng:-48.59308,end:'Rua Rudy Arnaldo Hintz, Perequê',fase:'Em obra',obra:9,ent:null,pav:null,torres:2,q:'2 e 3 quartos (1 suíte)',areas:'69 a 73 m²',disp:null,ap:1130000,area:68.51,pm2:16494,tipo:'3 dorm.',ri:null,lazer:['Mais de 3.300 m² de lazer','Piscinas internas e externas','Sauna seca e úmida, massagem','Academia e pilates','5 salões de festas','2 salas de jogos','Quadra poliesportiva','Playground, brinquedoteca, espaço pet'],lm2:3300,nota:'6 apartamentos por andar em cada torre.'},
+ {id:'lyon',nome:'Lyon Home Club',c:'Pasqualotto',g:'entorno',lat:-27.1561,lng:-48.5745,end:'Rua Felipe Sestren, Perequê',fase:'Em obra',obra:2,ent:null,pav:null,torres:2,q:'2 e 3 quartos (2 dorm. com 1 suíte)',areas:'69 a 74 m²',disp:null,ap:948000,area:65.94,pm2:14377,tipo:'2 dorm.',ri:null,lazer:['2.140 m² de lazer','Piscina de 72 m','Piscina infantil','Salões de festa','Quadra poliesportiva','Playground','Espaço pet de mais de 220 m²','Sacada com churrasqueira'],lm2:2140,nota:'Torre 2 prevista dez/2031.'},
+ {id:'gan',nome:'Residencial Ilha de Gan',c:'Urbaniza',g:'entorno',lat:-27.15484,lng:-48.59483,end:'Rua José Miguel Pedro, 540, Jardim Dourado',fase:'Em obra',obra:94,ent:null,pav:null,torres:null,q:'2 quartos (1 suíte), 1 vaga',areas:'72 a 73 m²',disp:null,ap:850000,area:72.72,pm2:11689,tipo:'2 dorm.',ri:null,lazer:['Salão de festas','Rooftop','Espaço gourmet','Churrasqueira integrada em algumas unidades'],lm2:null,nota:'Portal: entrega dez/2026.'},
+ {id:'luz',nome:'Luz de Valéria',c:'Sul',g:'entorno',lat:-27.13868,lng:-48.60888,end:'Av. Ayrton Andorinha, 572',fase:'Pré-lançamento',obra:0,ent:'2030-12',pav:20,torres:1,q:'2 e 3 quartos',areas:'74 a 228 m²',disp:null,ap:1036517,area:74,pm2:14007,tipo:'2 dorm.',ri:null,lazer:['900 m² de lazer','Embasamento: academia, kids, piscina, gourmet, spa, quadra','Rooftop: salão, jogos, pub, gourmet, brinquedoteca','Sacada com churrasqueira'],lm2:900,nota:'5 apartamentos por andar, 20 andares. Posição na Av. Ayrton Andorinha (fora do VivaPark).'},
+ {id:'aime',nome:'Aimè Residence',c:'Sul',g:'entorno',lat:-27.1550,lng:-48.5888,end:'Rua São Paulo, 05, Perequê',fase:'Em obra',obra:24,ent:null,pav:null,torres:null,q:'2 quartos',areas:'83 m²',disp:null,ap:984058,area:83.39,pm2:11801,tipo:'2 dorm.',ri:null,lazer:['Piscina adulta e infantil','Academia','Sala de jogos','Playground','Salão de festas','Brinquedoteca','Espaço gourmet'],lm2:null,nota:''},
+ {id:'sardenha',nome:'Ilha de Sardenha',c:'Santana',g:'entorno',lat:-27.1566,lng:-48.5740,end:'Rua Felipe Sestren, Perequê',fase:'Em obra',obra:12,ent:'2029-12',pav:null,torres:null,q:'2 quartos',areas:'82 m²',disp:null,ap:1233892,area:82.21,pm2:15009,tipo:'2 dorm.',ri:null,lazer:[],lm2:null,nota:'Endereço varia entre portais (outro cita Av. Hironildo Conceição dos Santos).'},
+ {id:'lagom',nome:'Lagom Perequê',c:'GT Home / ABC',g:'entorno',lat:-27.1556,lng:-48.5750,end:'Av. Colombo Machado Sales, Perequê',fase:'Pré-lançamento',obra:0,ent:'2028-12',pav:null,torres:6,q:'1 a 4 quartos',areas:'40 a 199 m²',disp:31,ap:1008103,area:41.31,pm2:24403,tipo:'1 dorm.',ri:null,lazer:['Piscinas aquecida, coberta, infantil e borda infinita','Sauna e spa','Academia','Quadras: esportiva, beach tennis, basquete','Coworking','Pista de caminhada','Pet place'],lm2:null,nota:'Portal: um apartamento de 170 m² a R$ 4,29 mi (≈ R$ 25.235/m², cálculo meu).'},
+ {id:'msmart',nome:'MS Smart',c:'MS',g:'entorno',lat:-27.16725,lng:-48.57022,end:'Rua Pedro Guerreiro, Vila Nova',fase:'Em obra',obra:52,ent:'2026-06',pav:null,torres:null,q:'2 quartos',areas:'57 m²',disp:null,ap:695377,area:57.14,pm2:12170,tipo:'2 dorm.',ri:null,lazer:[],lm2:null,nota:'Portal indica entrega jun/2026.'},
+ {id:'arvoredo',nome:'Reserva do Arvoredo Home Club',c:'Profor',g:'entorno',lat:-27.15503,lng:-48.56953,end:'Rua Rio Perequê',fase:'Em obra',obra:null,ent:'2026-12',pav:null,torres:null,q:'2 e 3 quartos',areas:'92 a 126 m²',disp:null,ap:1960000,area:null,pm2:null,tipo:null,ri:null,lazer:[],lm2:null,nota:'Só portal: “a partir de R$ 1,96 mi”, entrega dez/2026. Fora do DWV.'},
+ {id:'minuanno',nome:'Minuanno Residencial',c:'Caleone',g:'entorno',lat:-27.1554,lng:-48.5905,end:'Av. Colombo Machado Sales',fase:'Futuro lançamento',obra:0,ent:'2029-12',pav:null,torres:null,q:'2 e 3 quartos',areas:'64 a 96 m²',disp:null,ap:null,area:null,pm2:null,tipo:null,ri:null,lazer:[],lm2:null,nota:'Só portal, sem preço.'},
+ {id:'amalfitta',nome:'Amalfittà',c:'Nostracon',g:'entorno',lat:-27.1548,lng:-48.5893,end:'Av. Colombo Machado Sales',fase:'Futuro lançamento',obra:0,ent:'2029-08',pav:null,torres:null,q:'2 a 4 quartos',areas:'70 a 138 m²',disp:null,ap:null,area:null,pm2:null,tipo:null,ri:null,lazer:[],lm2:null,nota:'Só portal, sem preço.'},
+ {id:'costa',nome:'Costa Serenità',c:'Mella',g:'entorno',lat:-27.1568,lng:-48.5935,end:'Rua Rudy Arnaldo Hintz',fase:'Futuro lançamento',obra:0,ent:'2032-12',pav:null,torres:null,q:'1 a 3 quartos',areas:'26 a 104 m²',disp:null,ap:null,area:null,pm2:null,tipo:null,ri:null,lazer:[],lm2:null,nota:'Só portal, sem preço.'},
+ {id:'principia',nome:'Residencial Princípia',c:'Caleone',g:'entorno',lat:-27.1560,lng:-48.5926,end:'Rua Rudy Arnaldo Hintz',fase:'Futuro lançamento',obra:0,ent:'2031-12',pav:null,torres:null,q:'1 a 3 quartos',areas:'30 a 103 m²',disp:null,ap:null,area:null,pm2:null,tipo:null,ri:null,lazer:[],lm2:null,nota:'Só portal, sem preço.'},
+ {id:'valentin',nome:'Valentin',c:'M. Santos',g:'entorno',lat:-27.1553,lng:-48.5915,end:'Rua José Roberto Otto',fase:'Futuro lançamento',obra:0,ent:'2033-12',pav:null,torres:null,q:'1 e 2 quartos',areas:'32 a 60 m²',disp:null,ap:null,area:null,pm2:null,tipo:null,ri:null,lazer:[],lm2:null,nota:'Só portal, sem preço.'},
+ {id:'kansas',nome:'Kansas City Residence',c:'não informada',g:'entorno',lat:-27.1547,lng:-48.5923,end:'Rua José Roberto Otto',fase:'Futuro lançamento',obra:0,ent:'2032-10',pav:null,torres:null,q:'1 a 3 quartos',areas:'34 a 100 m²',disp:null,ap:null,area:null,pm2:null,tipo:null,ri:null,lazer:[],lm2:null,nota:'Só portal, sem preço.'}
+];
+const brl=v=>v==null?'—':v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+const mi=v=>v==null?'—':(v>=1e6?'R$ '+(v/1e6).toLocaleString('pt-BR',{maximumFractionDigits:2})+' mi':'R$ '+Math.round(v/1e3)+' mil');
+const mes=s=>s?s.slice(5)+'/'+s.slice(0,4):'—';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ilustração esquemática: pavimentos publicados desenham as faixas; sem pavimento = tracejado e sem escala */
+function torre(e,w=64,h=92){
+  const n=e.pav, known=n!=null, rows=known?Math.min(n,34):14, top=10, bh=h-top-8, fh=bh/rows;
+  const cor=e.g==='vivapark'?'#0A2540':'#1B8A9A', obra=e.obra==null?0:e.obra, y0=top+bh*(1-obra/100);
+  let s=`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="Ilustração esquemática de ${esc(e.nome)}">`;
+  s+=`<rect x="14" y="${top}" width="${w-28}" height="${bh}" fill="${known?'#fff':'none'}" stroke="${cor}" stroke-width="2" ${known?'':'stroke-dasharray="4 3"'}/>`;
+  if(obra>0) s+=`<rect x="14" y="${y0}" width="${w-28}" height="${top+bh-y0}" fill="${cor}" opacity=".85"/>`;
+  for(let i=1;i<rows;i++) s+=`<line x1="14" x2="${w-14}" y1="${top+i*fh}" y2="${top+i*fh}" stroke="${cor}" stroke-width=".6" opacity=".55"/>`;
+  s+=`<rect x="10" y="${top-5}" width="${w-20}" height="5" fill="#FFC72C" stroke="${cor}" stroke-width="1"/>`;
+  s+=`<line x1="4" x2="${w-4}" y1="${h-6}" y2="${h-6}" stroke="${cor}" stroke-width="2"/>`;
+  return s+'</svg>';
+}
+const tagFase=e=>`<span class="tag ${e.fase==='Em obra'?'y':''}">${e.fase}${e.obra?` ${e.obra}%`:''}</span>`;
+const pop=e=>`<div style="font:14px Barlow,sans-serif;min-width:230px"><div style="display:flex;gap:10px">${torre(e,56,80)}<div><b style="font:700 18px 'Barlow Condensed'">${esc(e.nome)}</b><br>${esc(e.c)}<br>${e.fase}${e.obra?' '+e.obra+'%':''}</div></div>
+ Pavimentos: <b>${e.pav??'—'}</b> · Quartos: ${esc(e.q)}<br>Disponíveis: <b>${e.disp??'—'}</b> · A partir de: <b>${mi(e.ap)}</b><br>R$/m²: <b>${e.pm2?brl(e.pm2):'—'}</b><br><a href="#c-${e.id}">Ver ficha completa ↓</a></div>`;
+
+/* KPIs */
+(function(){
+  const v=D.filter(e=>e.g==='vivapark'), comPm2=v.filter(e=>e.pm2), media=comPm2.reduce((s,e)=>s+e.pm2,0)/comPm2.length;
+  const disp=v.reduce((s,e)=>s+(e.disp||0),0);
+  const emObra=D.filter(e=>e.fase==='Em obra').length;
+  const k=[[D.length,'empreendimentos mapeados'],[v.length,'no VivaPark'],[D.length-v.length,'no entorno (outras construtoras)'],[emObra,'em obra agora'],[disp,'unidades à venda no VivaPark (DWV)'],[brl(Math.round(media)),'R$/m² médio de entrada no VivaPark'],[brl(Math.min(...comPm2.map(e=>e.pm2))),'menor R$/m² (VivaPark)'],[brl(Math.max(...comPm2.map(e=>e.pm2))),'maior R$/m² (VivaPark)']];
+  document.getElementById('kpis').innerHTML=k.map(x=>`<div class="kpi"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('');
+})();
+
+/* mapa */
+(function(){
+  const map=L.map('map',{scrollWheelZoom:true}).setView([-27.1625,-48.6020],16);
+  const sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Imagem: Esri, Maxar, Earthstar'}).addTo(map);
+  const osm=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'});
+  L.control.layers({'Satélite':sat,'Ruas':osm}).addTo(map);
+  L.marker([-27.1610804,-48.6043109],{title:'Acesso VivaPark'}).addTo(map).bindPopup('<b>VivaPark Porto Belo</b><br>Acesso (ponto do seu link do Google Maps)');
+  const pts=[[-27.1610804,-48.6043109]];
+  D.forEach(e=>{
+    const m=L.circleMarker([e.lat,e.lng],{radius:e.g==='vivapark'?10:8,color:'#D62839',weight:2,fillColor:e.g==='vivapark'?'#FFC72C':'#1B8A9A',fillOpacity:.95}).addTo(map);
+    m.bindPopup(pop(e),{maxWidth:300}); m.bindTooltip(e.nome,{direction:'top'}); pts.push([e.lat,e.lng]);
+  });
+  const BtnVer=L.Control.extend({options:{position:'topleft'},onAdd(){const b=L.DomUtil.create('button');b.textContent='Ver região toda';b.style.cssText='font:600 13px Barlow,sans-serif;padding:6px 10px;background:#FFC72C;color:#0A2540;border:2px solid #0A2540;cursor:pointer';L.DomEvent.on(b,'click',e=>{L.DomEvent.stop(e);map.fitBounds(pts,{padding:[30,30]})});return b}});
+  new BtnVer().addTo(map);
+  map.setView([-27.1625,-48.6020],16);
+})();
+
+/* tabela */
+let ord={k:'pm2',d:1};
+const cols=[['nome','Empreendimento',e=>e.nome],['c','Construtora',e=>e.c],['g','Região',e=>e.g==='vivapark'?'VivaPark':'Entorno'],['fase','Fase',e=>e.fase+(e.obra?' '+e.obra+'%':'')],['ent','Entrega',e=>mes(e.ent)],['pav','Pav.',e=>e.pav??'—','n'],['disp','À venda',e=>e.disp??'—','n'],['ap','A partir de',e=>mi(e.ap),'n'],['area','Área ref.',e=>e.area?e.area.toLocaleString('pt-BR')+' m²':'—','n'],['pm2','R$/m²',e=>e.pm2?brl(e.pm2):'—','n']];
+function tabela(){
+  const g=fGrupo.value,f=fFase.value,q=fBusca.value.toLowerCase();
+  let L2=D.filter(e=>(!g||e.g===g)&&(!f||e.fase===f)&&(!q||(e.nome+e.c).toLowerCase().includes(q)));
+  L2.sort((a,b)=>{const x=a[ord.k],y=b[ord.k];if(x==null&&y==null)return 0;if(x==null)return 1;if(y==null)return -1;return (typeof x==='number'?x-y:String(x).localeCompare(String(y),'pt-BR'))*ord.d});
+  document.getElementById('tabela').innerHTML='<tr>'+cols.map(c=>`<th class="${c[3]||''}" data-k="${c[0]}">${c[1]}${ord.k===c[0]?(ord.d>0?' ▲':' ▼'):''}</th>`).join('')+'</tr>'+L2.map(e=>`<tr>${cols.map(c=>`<td class="${c[3]||''}">${c[0]==='nome'?`<a href="#c-${e.id}">${esc(e.nome)}</a>`:esc(c[2](e))}</td>`).join('')}</tr>`).join('');
+  document.querySelectorAll('#tabela th').forEach(th=>th.onclick=()=>{const k=th.dataset.k;ord=ord.k===k?{k,d:-ord.d}:{k,d:1};tabela()});
+}
+['fGrupo','fFase','fBusca'].forEach(i=>document.getElementById(i).addEventListener('input',tabela)); tabela();
+
+/* cards */
+document.getElementById('cards').innerHTML=D.slice().sort((a,b)=>(a.g==='vivapark'?0:1)-(b.g==='vivapark'?0:1)).map(e=>`<article class="card" id="c-${e.id}">
+ <header>${torre(e)}<div><h3>${esc(e.nome)}</h3><div class="src">${esc(e.c)} · ${esc(e.end)}</div>
+ <div>${tagFase(e)}<span class="tag">${e.g==='vivapark'?'VivaPark':'Entorno'}</span>${e.ri===false?'<span class="tag r">Pré-reserva · sem RI</span>':''}</div>
+ ${e.obra?`<div class="tape" title="Obra ${e.obra}%"><i style="left:${e.obra}%;"></i></div>`:''}</div></header>
+ <div class="body">
+  <div class="price">${mi(e.ap)} <span class="src" style="font:500 13px Barlow">a partir de</span></div>
+  <dl><dt>R$/m² (menor unidade)</dt><dd>${e.pm2?brl(e.pm2):'—'}</dd><dt>Unidade de referência</dt><dd>${esc(e.tipo||'—')}${e.area?' · '+e.area.toLocaleString('pt-BR')+' m²':''}</dd>
+  <dt>Unidades à venda (DWV)</dt><dd>${e.disp??'—'}</dd><dt>Pavimentos</dt><dd>${e.pav??'—'}</dd><dt>Torres</dt><dd>${e.torres??'—'}</dd>
+  <dt>Quartos</dt><dd>${esc(e.q)}</dd><dt>Metragens</dt><dd>${esc(e.areas)}</dd><dt>Entrega</dt><dd>${mes(e.ent)}</dd><dt>Área de lazer</dt><dd>${e.lm2?e.lm2.toLocaleString('pt-BR')+' m²':'—'}</dd></dl>
+  ${e.lazer.length?`<div class="lazer"><b>Lazer:</b> ${e.lazer.map(esc).join(' · ')}</div>`:'<div class="lazer">Lazer: — (não publicado)</div>'}
+  ${e.nota?`<div class="src" style="margin-top:6px">${esc(e.nota)}</div>`:''}
+  <div class="src" style="margin-top:6px">Posição no mapa: estimada pela rua (${e.lat.toFixed(4)}, ${e.lng.toFixed(4)})</div>
+ </div></article>`).join('');
+
+/* leitura */
+(function(){
+  const v=D.filter(e=>e.g==='vivapark'&&e.pm2), s=[...v].sort((a,b)=>a.pm2-b.pm2), ent=D.filter(e=>e.g==='entorno'&&e.pm2), sm=[...ent].sort((a,b)=>a.pm2-b.pm2);
+  const mediaE=ent.reduce((t,e)=>t+e.pm2,0)/ent.length, mediaV=v.reduce((t,e)=>t+e.pm2,0)/v.length;
+  document.getElementById('leitura').innerHTML=`
+  <div class="note" style="border-left-color:var(--teal)"><b>VivaPark custa mais por m² que o entorno.</b> A entrada média no VivaPark é ${brl(Math.round(mediaV))}/m² contra ${brl(Math.round(mediaE))}/m² nos empreendimentos do entorno que estão no DWV (${ent.length} obras). A diferença é o prêmio do bairro planejado (lagos, segurança, escola, open shopping).</div>
+  <div class="note" style="border-left-color:var(--teal)"><b>Mais barato por m² no VivaPark:</b> ${s.slice(0,3).map(e=>`${e.nome} (${brl(e.pm2)})`).join(', ')}. <b>Mais caro:</b> ${s.slice(-3).reverse().map(e=>`${e.nome} (${brl(e.pm2)})`).join(', ')} — os de maior R$/m² são studios e salas, onde a unidade pequena encarece o metro.</div>
+  <div class="note" style="border-left-color:var(--teal)"><b>Fora do VivaPark o metro mais barato</b> está em ${sm.slice(0,3).map(e=>`${e.nome} (${brl(e.pm2)})`).join(', ')}. Atenção: o R$/m² do DWV é da unidade mais barata de cada obra, não a média da planta.</div>
+  <div class="note" style="border-left-color:var(--teal)"><b>Estágio das obras:</b> no VivaPark, Vista Jardins (95%), Vértice (60%), Voz (44%), Videiras (15%) e Veleiros (13%) estão em obra; Verenna, Vitta 27, Vision, Valence, Ventura e Veccel seguem em pré-lançamento (sem Registro de Incorporação em Vitta 27 e Verenna).</div>`;
+})();
+</script>
+</body>
+</html>

@@ -140,6 +140,7 @@ export default function App() {
         {NAV.map(([id, r]) => (
           <a key={id} href={`#${id}`}>{r}</a>
         ))}
+        <a href="./estudo-mapa-2d.html" target="_blank" rel="noreferrer">Mapa satélite (2D)</a>
       </nav>
 
       <section className="hero">
